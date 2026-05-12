@@ -7,7 +7,9 @@ export async function POST(req: NextRequest) {
   try {
     const cookie = req.cookies.get("refreshToken")?.value;
     if (cookie) {
-      await prisma.refreshToken.deleteMany({ where: { token: cookie } }).catch(() => {});
+      await prisma.refreshToken
+        .deleteMany({ where: { token: cookie } })
+        .catch(() => {});
     }
     const expired = serialize("refreshToken", "", {
       httpOnly: true,
@@ -17,9 +19,13 @@ export async function POST(req: NextRequest) {
       maxAge: 0,
     });
 
-    return NextResponse.json({ message: "Logged out" }, { headers: { "Set-Cookie": expired } });
+    return NextResponse.json(
+      { message: "Logged out" },
+      { headers: { "Set-Cookie": expired } },
+    );
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+    const errMessage =
+      err instanceof Error ? err.message : "Something went wrong";
+    return NextResponse.json({ error: errMessage }, { status: 500 });
   }
 }

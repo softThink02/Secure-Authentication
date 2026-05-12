@@ -55,7 +55,7 @@ export default function LoginForm() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div>
             <label className="block mb-1 font-medium">Email</label>
-            <div className="relative">
+            <div className="relative border border-black rounded-md">
               <FaEnvelope className="absolute left-3 top-3 text-gray-400" />
               <input
                 type="email"
