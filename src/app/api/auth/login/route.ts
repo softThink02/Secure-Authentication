@@ -5,7 +5,7 @@ import { SignJWT } from "jose";
 
 
 const ACCESS_EXPIRES = "15m";
-const REFRESH_EXPIRES_SECONDS = 7 * 24 * 60 * 60; // 7 days
+const REFRESH_EXPIRES_SECONDS = 7 * 24 * 60 * 60;
 
 export async function POST(req: NextRequest) {
     try {
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
 
 
     } catch (err) {
-        console.error(err);
-        return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+        const errMessage = err instanceof Error ? err.message : "Something went wrong"  
+        return NextResponse.json({ error: errMessage }, { status: 500 });
     }
 }

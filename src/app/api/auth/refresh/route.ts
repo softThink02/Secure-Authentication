@@ -12,16 +12,13 @@ export async function POST(req: NextRequest) {
     if (!cookie)
       return NextResponse.json({ error: "No refresh token" }, { status: 401 });
 
-    // بررسی اینکه توکن در DB هست
     const dbToken = await prisma.refreshToken.findFirst({ where: { token: cookie } });
     if (!dbToken)
       return NextResponse.json({ error: "Invalid refresh token" }, { status: 401 });
 
-    // verify signature & expiry
     try {
       await jwtVerify(cookie, secret);
     } catch (e) {
-      // توکن نامعتبر => حذف از DB
       await prisma.refreshToken.deleteMany({ where: { token: cookie } }).catch(() => {});
       return NextResponse.json({ error: "Invalid refresh token" }, { status: 401 });
     }
@@ -62,7 +59,7 @@ export async function POST(req: NextRequest) {
 
     return res;
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+    const errMessage = err instanceof Error ? err.message : "Something went wrong"
+    return NextResponse.json({ error: errMessage }, { status: 500 });
   }
 }
